@@ -11,26 +11,9 @@ import datetime
 BASE_URL = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/classSearch/get_subject'
 BASE_URL_PARAMS = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?dataType=json&term=201931&offset=1&max=500'
 
-def parse_departments(json):
-    """
-    Given the JSON of all of the departments, parses them and initializes them into Department objects
-    """
-
-    i = 0
-    for dept in json:
-        # Should have (code, decription)
-        dept = Department(code=dept["code"], description=dept["description"])
-        dept.save()
-        i = i + 1
-    
-    print(f"Filled {i} departments")
-
-    return
-
-# Retrieve all of the departments
 def get_departments():
     """
-    Sends an GET request to get all of the departments and returns them as JSON
+    Retrieves all of the departments from BASE_URL and returns them as JSON, if it was successful
     """
 
     term = '201931' # Get current term from somewhered
@@ -54,6 +37,23 @@ def get_departments():
         print('Error converting depts to JSON')
 
     return json
+
+def parse_departments(json):
+    """
+    Given the JSON of all of the departments, parses them and initializes them into Department objects
+    """
+
+    i = 0
+    for dept in json:
+        # Should have (code, decription)
+        dept = Department(code=dept["code"], description=dept["description"])
+        dept.save()
+        i = i + 1
+    
+    print(f"Filled {i} departments")
+
+    return
+
 
 def scrape_departments():
     json = get_departments()
