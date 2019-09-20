@@ -2,7 +2,6 @@
 
 from django.core.management import base
 from scraper.models import Department
-# from ...models import Department
 
 import requests
 import json
