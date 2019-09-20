@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'dbautoscheduler',
         'HOST': 'localhost',
         'PORT': '5432',
-        'USERNAME': 'postgres',
+        'USER': 'postgres',
         'PASSWORD': 'gannon'
     }
 }
