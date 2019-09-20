@@ -1,6 +1,8 @@
 # Called to execute the beginning of scaping courses
 
 from django.core.management import base
+from scraper.models import Department
+# from ...models import Department
 
 import requests
 import json
@@ -15,8 +17,8 @@ def parse_departments(json):
 
     for dept in json:
         # Should have (code, decription)
-
-        print(v)
+        dept = Department(code=dept["code"], description=dept["description"])
+        dept.save()
 
     return
 
@@ -46,7 +48,6 @@ def scrape_departments():
     json = get_departments()
 
     parse_departments(json)
-
 
 class Command(base.BaseCommand):
     def handle(self, *args, **options):
