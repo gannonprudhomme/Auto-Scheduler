@@ -6,7 +6,7 @@ from scraper.models import Course
 # Basically a meeting time that a section meets at
 class Meeting(models.Model):
     id = models.CharField(max_length=20, primary_key=True) # What would this be?
-    build = models.CharField(max_length=4) # Should we reference Building here? If we need it as a model anyways
+    building = models.CharField(max_length=4) # Should we reference Building here? If we need it as a model anyways
     dept = models.CharField(max_length=5)
     meeting_days = models.CharField(max_length=7)
     start_time = models.TimeField()
