@@ -1,0 +1,146 @@
+{
+    "section_test": {
+        "id": 468298,
+        "term": "201931",
+        "termDesc": "Fall 2019 - College Station",
+        "courseReferenceNumber": "10915",
+        "partOfTerm": "1",
+        "courseNumber": "110",
+        "subject": "CSCE",
+        "subjectDescription": "CSCE - Computer Sci &amp; Engr",
+        "sequenceNumber": "501",
+        "campusDescription": "College Station",
+        "scheduleTypeDescription": "Lecture and Laboratory",
+        "courseTitle": "PROGRAMMING I",
+        "creditHours": null,
+        "maximumEnrollment": 50,
+        "enrollment": 50,
+        "seatsAvailable": 0,
+        "waitCapacity": 0,
+        "waitCount": 0,
+        "waitAvailable": 0,
+        "crossList": null,
+        "crossListCapacity": null,
+        "crossListCount": null,
+        "crossListAvailable": null,
+        "creditHourHigh": null,
+        "creditHourLow": 4,
+        "creditHourIndicator": null,
+        "openSection": false,
+        "linkIdentifier": null,
+        "isSectionLinked": false,
+        "subjectCourse": "CSCE110",
+        "faculty": [
+        {
+            "bannerId": "T00918203",
+            "category": null,
+            "class": "net.hedtech.banner.student.faculty.TamuFacultyResultDecorator",
+            "courseEvalExists": null,
+            "courseReferenceNumber": "10915",
+            "cvExists": null,
+            "displayName": "David K. Houngninou",
+            "emailAddress": "davidkebo@email.tamu.edu",
+            "instructorPidm": 939540,
+            "primaryIndicator": true,
+            "syllabusExists": null,
+            "term": "201931"
+        }
+        ],
+        "meetingsFaculty": [
+        {
+            "category": "01",
+            "class": "net.hedtech.banner.student.schedule.SectionSessionDecorator",
+            "courseReferenceNumber": "10915",
+            "faculty": [],
+            "meetingTime": {
+            "beginTime": "1245",
+            "building": "ZACH",
+            "buildingDescription": "Zachry Engineering Ed. Complex",
+            "campus": "CS",
+            "campusDescription": "College Station",
+            "category": "01",
+            "class": "net.hedtech.banner.general.overall.MeetingTimeDecorator",
+            "courseReferenceNumber": "10915",
+            "creditHourSession": 4.0,
+            "endDate": "12/11/2019",
+            "endTime": "1400",
+            "friday": false,
+            "hoursWeek": 2.5,
+            "meetingScheduleType": "LL",
+            "meetingType": "LEC",
+            "meetingTypeDescription": "Lecture",
+            "monday": false,
+            "room": "244",
+            "saturday": false,
+            "startDate": "08/26/2019",
+            "sunday": false,
+            "term": "201931",
+            "thursday": true,
+            "tuesday": true,
+            "wednesday": false
+            },
+            "term": "201931"
+        },
+        {
+            "category": "02",
+            "class": "net.hedtech.banner.student.schedule.SectionSessionDecorator",
+            "courseReferenceNumber": "10915",
+            "faculty": [],
+            "meetingTime": {
+            "beginTime": "1730",
+            "building": "ZACH",
+            "buildingDescription": "Zachry Engineering Ed. Complex",
+            "campus": "CS",
+            "campusDescription": "College Station",
+            "category": "02",
+            "class": "net.hedtech.banner.general.overall.MeetingTimeDecorator",
+            "courseReferenceNumber": "10915",
+            "creditHourSession": 0.0,
+            "endDate": "12/11/2019",
+            "endTime": "1820",
+            "friday": false,
+            "hoursWeek": 1.66,
+            "meetingScheduleType": "LL",
+            "meetingType": "LAB",
+            "meetingTypeDescription": "Laboratory",
+            "monday": false,
+            "room": "244",
+            "saturday": false,
+            "startDate": "08/26/2019",
+            "sunday": false,
+            "term": "201931",
+            "thursday": true,
+            "tuesday": true,
+            "wednesday": false
+            },
+            "term": "201931"
+        }
+        ],
+        "reservedSeatSummary": null,
+        "sectionAttributes": [
+        {
+            "class": "net.hedtech.banner.student.schedule.SectionDegreeProgramAttributeDecorator",
+            "code": "ACST",
+            "courseReferenceNumber": "10915",
+            "description": "College Station",
+            "isZTCAttribute": false,
+            "termCode": "201931"
+        },
+        {
+            "class": "net.hedtech.banner.student.schedule.SectionDegreeProgramAttributeDecorator",
+            "code": "NTFA",
+            "courseReferenceNumber": "10915",
+            "description": "NonTraditional Format Approved",
+            "isZTCAttribute": false,
+            "termCode": "201931"
+        }
+        ],
+        "termType": "STANDARD",
+        "instructionalMethod": "Traditional, Face-to-Face",
+        "classRoster": "https://compass-sso.tamu.edu/ssomanager/c/SSB?pkg=bwykfcwl.P_FacClaListSum?term=201931&crn=10915"
+    },
+
+    "meeting_test": {
+
+    }
+}
