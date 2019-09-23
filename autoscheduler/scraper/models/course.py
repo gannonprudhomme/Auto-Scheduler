@@ -1,7 +1,7 @@
 from django.db import models
 
 class Course(models.Model): # Directly from GBS:w
-    id = models.CharField(max_length=10, primary_key=True) # Shouldn't this be a number?
+    id = models.CharField(max_length=10, primary_key=True) # Could be dept+course_num
     dept = models.CharField(max_length=4, db_index=True) # CSCE
     course_num = models.CharField(max_length=5, db_index=True) # i.e. 221
     title = models.CharField(max_length=100) # Course title, i.e. "Data Structres & Algorithms"
