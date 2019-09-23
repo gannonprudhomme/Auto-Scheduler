@@ -15,7 +15,7 @@ class Meeting(models.Model):
     
 
 class Section(models.Model):
-    id = models.CharField(max_length=15, primary_key=True) # CRN?
+    crn = models.CharField(max_length=15, primary_key=True) # CRN?
     subject = models.CharField(max_length=4)
     # parent_course = models.ManyToManyField(Course) # The course this is a section of?
 
