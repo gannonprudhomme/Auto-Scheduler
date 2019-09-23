@@ -2,6 +2,9 @@ from django.core.management import base
 
 from http.cookiejar import CookieJar
 
+from scraper.models.course import Course
+from scraper.models.section import Section, Meeting
+
 import requests, json
 import time, datetime
 
@@ -64,13 +67,65 @@ def scrape_courses():
     return json
 
 def parse_courses(json):
-    # Stuff
-    print(json)
+    id = json['id']
+    crn = json['courseReferenceNumber]']
+    subject = json['subject']
+    course_num = json['courseNumber']
+    title = json['courseTitle']
 
-def parse_section(json):
+    maxSeats = json['maximumEnrollment']
+    seatsAvailable = json['seatsAvailable']
+    # Get wait info?
+    # Get credit hour stuff? - probs
+    subject_and_course = json['subjectCourse']
+
+    faculty = json['faculty'] # Send to parse_instructor or whatever
+
+    meetings = json['meetingsFaculty']
+    for meeting in meetings:
+        m = parse_meeting(meeting)
+        m.save()
+
+def parse_section(json, course):
     """ Given a single section data, parses it and returns a course, section tuple? """
     print(json)
 
+# TODO: Rename json
+def parse_meeting(json, section_id):
+    """ Given a single meeting dict, parses it... and returns a Meeting object"""
+
+    # Probably would need error catching in here to make sure it's formed correctly?
+    count = 0
+    meeting = Meeting(
+        id = section_id + "-" + str(count), # Could just use the CRN
+        crn = json["courseReferenceNumber"],
+        building = json["building"],
+        meeting_days = parse_meeting_days(json),
+        start_time = parse_time(json["beginTime"]),
+        end_time = parse_time(json["endTime"]),
+        meeting_type = json["meetingType"]
+    )
+
+    return meeting
+
+def parse_meeting_days(json):
+    meeting_days = ""
+
+    meeting_days = meeting_days + ('M' if json['monday'] else '')
+    meeting_days = meeting_days + ('T' if json['tuesday'] else '')
+    meeting_days = meeting_days + ('W' if json['wednesday'] else '')
+    meeting_days = meeting_days + ('R' if json['thursday'] else '')
+    meeting_days = meeting_days + ('F' if json['friday'] else '')
+    meeting_days = meeting_days + ('S' if json['saturday'] else '')
+    meeting_days = meeting_days + ('U' if json['sunday'] else '')
+
+    return meeting_days
+
+def parse_time(time_str):
+   hr = int(time_str[0:2])
+   m = int(time_str[2:5])
+
+   return datetime.time(hr, m, 0)
 
 class Command(base.BaseCommand):
     def handle(self, *args, **options):
