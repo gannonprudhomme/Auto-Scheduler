@@ -13,4 +13,4 @@ class Course(models.Model): # Directly from GBS:w
     # distribution_of_hours = models.CharField(max_length=100)
 
     class Meta:
-        db_table: "course"
+        db_table = "courses"

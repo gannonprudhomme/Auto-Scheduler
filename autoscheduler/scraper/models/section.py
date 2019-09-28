@@ -13,13 +13,21 @@ class Meeting(models.Model):
     end_time = models.TimeField()
     meeting_type = models.CharField(max_length=50) # Lecture, Lab, etc
 
+    class Meta:
+        db_table = "meetings"
+
 
 class Section(models.Model):
     id = models.CharField(max_length=15, primary_key=True) # Combination of crn & term
     subject = models.CharField(max_length=4) # Is this necessary?
-    # parent_course = models.ManyToManyField(Course) # The course this is a section of?
+    # Do we need crn?
+    # Do we need term_code?
 
     # min & max credit(hours)?
 
     instructor = models.CharField(max_length=100) # The instructor's ID. Could this be NULL?
     meetings = models.ManyToManyField(Meeting) # Like an array of meetings?
+
+    class Meta:
+        db_table = "sections"
+        
