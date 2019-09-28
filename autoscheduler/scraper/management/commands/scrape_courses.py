@@ -8,6 +8,8 @@ from scraper.models.section import Section, Meeting
 import requests, json
 import time, datetime
 
+from pathlib import Path # Temporary
+
 # This might need to scrape sections as well, since they're given together
 # Everytime we load in a section, check if the course is in the database? Or just save it anyways?
 # Will probably save us time if we don't attempt ot save it every time - use a hashset with courses #'s in this case
@@ -27,14 +29,7 @@ params = {
     'sortDirection': 'asc',
 }
 
-def update_cookies(session):
-    cookie_to_add = { 'JSESSIONID': 'cookie' }
-
-    session.cookies.set('JSESSIONID', 'cookie', domain='compassxe-ssb.tamu.edu')
-    cookies = session.cookies
-    # session.cookies.update(cookie_to_add)
-
-    return session
+loaded_courses = set()
 
 def generate_session():
     """ Goes to the correct places to generate a valid JSESSIONID cookie that we need to search for courses """
@@ -44,51 +39,90 @@ def generate_session():
     data = session.post('https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/term/search?mode=search')
     terms = session.get(TERMS_URL)
 
-    # session = update_cookies(session)
-
-    print(session.cookies) # Doesn't have any cookies until we do the GET
-    print()
-
     return session
 
-def scrape_courses():
-    # Somehow create a session id
-    session = generate_session()
-    data = session.get(BASE_URL_PARAMS)
+# Temporary, until I can get the courses actually scraped
+def get_faked_courses():
+    base_path = Path(__file__).parent
+    file_path = (base_path / "../../tests/course_inputs.json").resolve()
+    data = ''
 
-    json = ''
+    with open(file_path) as json_file:
+        data = json.load(json_file)
+
+        json_file.close()
+
+    return data
+
+# Rename to retrieve_courses?
+def get_courses():
+    # Somehow create a session id
+    # session = generate_session()
+    # data = session.get(BASE_URL_PARAMS)
+    data = get_faked_courses()
+    print(data)
+
     try:
         json = data.json()
+        return json
+        # print(f"totalCount: {json["totalCount"]}")
     except:
         print('Error: scrape_courses could not get json')
-    
-    # print(json['data'])
-    print(f"totalCount: {json['totalCount']}")
-    return json
 
-def parse_courses(json):
-    id = json['id']
-    crn = json['courseReferenceNumber]']
-    subject = json['subject']
-    course_num = json['courseNumber']
-    title = json['courseTitle']
+    return dict()
+    
+
+def parse_course_list(json):
+    for section in json["data"]:
+        subject_and_course = parse_course(section)
+        parse_section(section, subject_and_course)
+
+def parse_course(json):
+    course = Course(
+        id = json['id'],
+        dept = json['subject'],
+        course_num = json['courseNumber'],
+        title = json['courseTitle'],
+        # crn = json['courseReferenceNumber]'],
+    )
 
     maxSeats = json['maximumEnrollment']
     seatsAvailable = json['seatsAvailable']
-    # Get wait info?
+    # Get wait list info?
     # Get credit hour stuff? - probs
-    subject_and_course = json['subjectCourse']
+    subject_and_course = json['subjectCourse'] # i.e. CSCE221
 
     faculty = json['faculty'] # Send to parse_instructor or whatever
 
-    meetings = json['meetingsFaculty']
-    for meeting in meetings:
-        m = parse_meeting(meeting)
-        m.save()
+    # Only save it to the database if it hasn't been loaded yet? Or does it not matter
+    if course_num not in loaded_courses:
+        course.save()
 
+        # Add this course to the
+        loaded_courses.add(course_num)
+
+    return subject_and_course
+
+# TODO: Complete this
 def parse_section(json, course):
     """ Given a single section data, parses it and returns a course, section tuple? """
-    print(json)
+
+    crn = json["courseReferenceNumber"]
+    section = Section( # Not sure what else I want to have in here
+        id=f"{crn}-{json['term']}",
+        crn=crn,
+        subject=json["subject"], # Not sure if we need this
+        instructor=json["faculty"]["bannerId"], # I assume this is their ID?
+    )
+
+    meetings = json['meetingsFaculty']
+    for meeting_data in meetings:
+        meeting = parse_meeting(meeting_json)
+        meeting.save()
+        section.meetings.add(meeting)
+        # Need to connect the meetings to the courses somehow
+
+    section.save()
 
 # TODO: Rename json
 def parse_meeting(json, section_id):
@@ -130,7 +164,10 @@ def parse_time(time_str):
 class Command(base.BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
-        scrape_courses()
+
+        data = get_courses()
+        parse_course_list(data)
+
         end = time.time()
         seconds_elapsed = int(end - start)
         time_delta = datetime.timedelta(seconds=seconds_elapsed)
