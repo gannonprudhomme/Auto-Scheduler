@@ -29,8 +29,8 @@ class Section(models.Model):
     max_credits = models.IntegerField(null=True) # Can definitely be null
 
     # Seating availability?
-    maxEnrollment = models.IntegerField() # Number of students in the class possible
-    currentEnrolled = models.IntegerField() # Can this be null?
+    max_enrollment = models.IntegerField() # Number of students in the class possible
+    current_enrolled = models.IntegerField() # Can this be null?
 
     # Wait list stuff? Might be cool to show
 
