@@ -7,6 +7,7 @@ from scraper.models.section import Section, Meeting
 
 import requests, json
 import time, datetime
+import asyncio
 
 from pathlib import Path # Temporary
 
@@ -17,6 +18,7 @@ from pathlib import Path # Temporary
 BASE_URL = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/searchResults/searchResults'
 BASE_URL_PARAMS = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/searchResults/searchResults?txt_subject=CSCE&txt_term=201931&startDatepicker=&endDatepicker=&uniqueSessionId=scf271568699904823&pageOffset=0&pageMaxSize=50&sortColumn=subjectDescription&sortDirection=asc&[object%20Object]'
 TERMS_URL = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/classSearch/getTerms?uniqueSessionId=hq0xu1569180038532&dataType=json&searchTerm=&offset=1&max=10&_=1569181435047'
+DESCRIPTION_URL = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/searchResults/getCourseDescription'
 #txt_subject=CSCE&txt_courseNumber=312&txt_term=201931&startDatepicker=&endDatepicker=&uniqueSessionId=scf271568699904823
 # &pageOffset=0&pageMaxSize=500&sortColumn=subjectDescription&sortDirection=asc&[object%20Object]'
 
@@ -44,7 +46,20 @@ def generate_session():
 # Temporary, until I can get the courses actually scraped
 def get_faked_courses():
     base_path = Path(__file__).parent
-    file_path = (base_path / "../../tests/course_inputs.json").resolve()
+    file_path = (base_path / "../../tests/course_inputs_large.json").resolve()
+    data = ''
+
+    with open(file_path) as json_file:
+        data = json.load(json_file)
+        print('done loading')
+
+        json_file.close()
+
+    return data
+
+def get_faked_section():
+    base_path = Path(__file__).parent
+    file_path = (base_path / "../../tests/section_inputs.json").resolve()
     data = ''
 
     with open(file_path) as json_file:
@@ -54,30 +69,47 @@ def get_faked_courses():
 
     return data
 
+
+course_data = { }
+def retrieve_course(data):
+    # print(data)
+    course_data = data #.json()
+    print('loaded course!')
+
 # Rename to retrieve_courses?
 def get_courses():
     # Somehow create a session id
     # session = generate_session()
     # data = session.get(BASE_URL_PARAMS)
     data = get_faked_courses()
-    print(data)
+    # data = get_faked_section()
 
     try:
-        json = data.json()
-        return json
-        # print(f"totalCount: {json["totalCount"]}")
-    except:
+        # print('awaiting...')
+        course_data = data['data']
+        # retrieve_course(data)
+        return course_data
+        print(f"totalCount: {data['totalCount']}")
+    except Exception as e:
         print('Error: scrape_courses could not get json')
+        print(e)
 
     return dict()
-    
+
+def get_course_descriptions(term, crn):
+    "Given the term code & a crn, returns the course description for the class"
+    pass
 
 def parse_course_list(json):
-    for section in json["data"]:
+    count = 0
+    for section in json:
         subject_and_course = parse_course(section)
         parse_section(section, subject_and_course)
+        count = count + 1
+    print(f'Scraped {len(loaded_courses)} courses and {count} sections')
 
 def parse_course(json):
+    # print(json)
     course = Course(
         id = json['id'],
         dept = json['subject'],
@@ -92,8 +124,9 @@ def parse_course(json):
     # Get credit hour stuff? - probs
     subject_and_course = json['subjectCourse'] # i.e. CSCE221
 
-    faculty = json['faculty'] # Send to parse_instructor or whatever
+    # faculty = json['faculty'] # Send to parse_instructor or whatever
 
+    course_num = json['courseNumber']
     # Only save it to the database if it hasn't been loaded yet? Or does it not matter
     if course_num not in loaded_courses:
         course.save()
@@ -109,35 +142,55 @@ def parse_section(json, course):
 
     crn = json["courseReferenceNumber"]
     section = Section( # Not sure what else I want to have in here
-        id=f"{crn}-{json['term']}",
-        crn=crn,
-        subject=json["subject"], # Not sure if we need this
-        instructor=json["faculty"]["bannerId"], # I assume this is their ID?
-    )
+        id = f"{crn}-{json['term']}",
+        subject = json["subject"], # Not sure if we need this
+        section_num = json["sequenceNumber"],
+        course_num = json["courseNumber"],
+        term_code = json["term"],
 
-    meetings = json['meetingsFaculty']
-    for meeting_data in meetings:
-        meeting = parse_meeting(meeting_json)
-        meeting.save()
-        section.meetings.add(meeting)
-        # Need to connect the meetings to the courses somehow
+        min_credits = json["creditHourLow"],
+        max_credits = json["creditHourHigh"],
+
+        maxEnrollment = json["maximumEnrollment"],
+        currentEnrolled = json["enrollment"],
+
+        instructor=json["faculty"][0]["bannerId"], # I assume this is their ID?
+    )
 
     section.save()
 
+    meetings = json['meetingsFaculty']
+    count = 0
+    for meeting_data in meetings:
+        meeting = parse_meeting(meeting_data, section.id, count)
+        meeting.save()
+        section.meetings.add(meeting)
+        # Need to connect the meetings to the courses somehow
+        count = count + 1
+
+    section.save()
+    # print(f'Scrapped {count} meetings ')
+
 # TODO: Rename json
-def parse_meeting(json, section_id):
+def parse_meeting(json, section_id, count):
     """ Given a single meeting dict, parses it... and returns a Meeting object"""
 
+    begin_time = json['meetingTime']['beginTime']
+    end_time = json['meetingTime']['beginTime']
+    if(begin_time != None):
+        begin_time = parse_time(begin_time)
+        end_time = parse_time(end_time)
+    
+
     # Probably would need error catching in here to make sure it's formed correctly?
-    count = 0
     meeting = Meeting(
         id = section_id + "-" + str(count), # Could just use the CRN
         crn = json["courseReferenceNumber"],
-        building = json["building"],
-        meeting_days = parse_meeting_days(json),
-        start_time = parse_time(json["beginTime"]),
-        end_time = parse_time(json["endTime"]),
-        meeting_type = json["meetingType"]
+        building = json['meetingTime']['building'], # Can be null
+        meeting_days = parse_meeting_days(json['meetingTime']),
+        start_time = begin_time,
+        end_time = end_time,
+        meeting_type = json['meetingTime']['meetingType']
     )
 
     return meeting
