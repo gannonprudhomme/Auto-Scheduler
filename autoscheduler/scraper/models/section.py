@@ -5,6 +5,11 @@ from scraper.models import Course
 # Should this have a different name?
 # Basically a meeting time that a section meets at
 class Meeting(models.Model):
+    """ 
+    Represents a meeting time of a section, such as a lab, lecture, or recitation 
+    There can be multiple meeting times per section, such as a lab + lecture
+    """
+
     id = models.CharField(max_length=20, primary_key=True) # What would this be?
     crn = models.CharField(max_length=10, db_index=True) # The reference to the section
     building = models.CharField(max_length=4, null=True) # Should we reference Building here? If we need it as a model anyways
