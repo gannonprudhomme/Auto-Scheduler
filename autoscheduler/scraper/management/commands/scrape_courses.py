@@ -4,6 +4,7 @@ from http.cookiejar import CookieJar
 
 from scraper.models.course import Course
 from scraper.models.section import Section, Meeting
+from scraper.models.instructor import Instructor
 
 import requests, json
 import time, datetime
@@ -32,6 +33,7 @@ params = {
 }
 
 loaded_courses = set()
+loaded_instructors = set() # Contains their "bannerId"
 
 def generate_session():
     """ Goes to the correct places to generate a valid JSESSIONID cookie that we need to search for courses """
@@ -69,13 +71,6 @@ def get_faked_section():
 
     return data
 
-
-course_data = { }
-def retrieve_course(data):
-    # print(data)
-    course_data = data #.json()
-    print('loaded course!')
-
 # Rename to retrieve_courses?
 def get_courses():
     # Somehow create a session id
@@ -83,6 +78,7 @@ def get_courses():
     # data = session.get(BASE_URL_PARAMS)
     data = get_faked_courses()
     # data = get_faked_section()
+    course_data = { }
 
     try:
         # print('awaiting...')
@@ -106,7 +102,7 @@ def parse_course_list(json):
         subject_and_course = parse_course(section)
         parse_section(section, subject_and_course)
         count = count + 1
-    print(f'Scraped {len(loaded_courses)} courses and {count} sections')
+    print(f'Scraped {len(loaded_courses)} courses, {count} sections, and {len(loaded_instructors)} instructors')
 
 def parse_course(json):
     # print(json)
@@ -124,7 +120,12 @@ def parse_course(json):
     # Get credit hour stuff? - probs
     subject_and_course = json['subjectCourse'] # i.e. CSCE221
 
-    # faculty = json['faculty'] # Send to parse_instructor or whatever
+    for faculty in json['faculty']:
+        instructor_id = faculty['bannerId']
+        if instructor_id not in loaded_instructors:
+            parse_instructor(faculty)
+
+            loaded_instructors.add(instructor_id)
 
     course_num = json['courseNumber']
     # Only save it to the database if it hasn't been loaded yet? Or does it not matter
@@ -151,8 +152,8 @@ def parse_section(json, course):
         min_credits = json["creditHourLow"],
         max_credits = json["creditHourHigh"],
 
-        maxEnrollment = json["maximumEnrollment"],
-        currentEnrolled = json["enrollment"],
+        max_enrollment = json["maximumEnrollment"],
+        current_enrolled = json["enrollment"],
 
         instructor=json["faculty"][0]["bannerId"], # I assume this is their ID?
     )
@@ -213,6 +214,16 @@ def parse_time(time_str):
    m = int(time_str[2:5])
 
    return datetime.time(hr, m, 0)
+
+def parse_instructor(faculty_data):
+    instructor = Instructor(
+        id = faculty_data['bannerId'],
+        name = faculty_data['displayName'],
+        email = faculty_data['emailAddress'],
+        pidm = faculty_data['instructorPidm'],
+    )
+
+    instructor.save()
 
 class Command(base.BaseCommand):
     def handle(self, *args, **options):
