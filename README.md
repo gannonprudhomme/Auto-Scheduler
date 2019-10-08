@@ -33,4 +33,4 @@ To do these,
 3) Run `./manage.py scrape_dept` to scrape all of the available departments.
 4) Run `./manage.py scrape_courses` to scrape the courses, sections, and instructors.
 
-If `./manage.py` isn't working, try to use `python manage.py` in place of it. 
+If `./manage.py` isn't working, try to use `python manage.py` or `python3 manage.py` in place of it. 
