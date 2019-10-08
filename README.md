@@ -28,5 +28,9 @@ The only thing set up currently is scraping a single department worth of courses
 To do these,
 
 1) Run `cd autoscheduler`
-2) Run `./manage.py scrape_dept` to scrape all of the available departments.
-3) Run `./manage.py scrape_courses` to scrape the courses, sections, and instructors.
+2) Run `./manage.py makemigrations` and `./manage.py migrate` to generate SQL that will be used to fill the database.
+3) Run `./manage.py createsuperuser` to create a user for Django.
+3) Run `./manage.py scrape_dept` to scrape all of the available departments.
+4) Run `./manage.py scrape_courses` to scrape the courses, sections, and instructors.
+
+If `./manage.py` isn't working, try to use `python manage.py` in place of it. 
