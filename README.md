@@ -21,4 +21,11 @@ Password: (not necessary)
 Using psql: Type `\l` in the psql prompt and see if `dbautoscheduler` is in the list.  
 Using pgAdmin: Click the name of the server you created, and see if `dbautoscheduler` is in the tree menu.
 
+## Running
+The only thing set up currently is scraping a single department worth of courses(CSCE) and scraping all of the departments.
 
+To do these,
+
+1) Run `cd autoscheduler`
+2) Run `./manage.py scrape_depst` to scrape all of the available departments.
+3) Run `./manage.py scrape_courses` to scrape the courses, sections, and instructors.
