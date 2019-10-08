@@ -20,6 +20,7 @@ Password: (not necessary)
 5) Ensure the database `dbautoscheduler` has been created:  
 Using psql: Type `\l` in the psql prompt and see if `dbautoscheduler` is in the list.  
 Using pgAdmin: Click the name of the server you created, and see if `dbautoscheduler` is in the tree menu.
+6) If you'd like to get the current project running, you can clone the repository with `git clone https://github.com/gannonprudhomme/AutoScheduler/` 
 
 ## Running
 The only thing set up currently is scraping a single department worth of courses(CSCE) and scraping all of the departments.
