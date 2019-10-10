@@ -5,23 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --mode development ./index.js --output ../static/main.js",
-    "build": "webpack --mode production ./index.js --output ../static/main.js"
+    "dev": "webpack --mode development ./index.tsx --output ../static/main.js",
+    "build": "webpack --mode production ./index.tsx --output ../static/main.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.6.3",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-react": "^7.6.3",
     "@types/react": "^16.9.5",
     "@types/react-dom": "^16.9.1",
-    "babel-loader": "^8.0.6",
-    "babel-plugin-transform-class-properties": "^6.24.1",
     "prop-types": "^15.7.2",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "source-map-loader": "^0.2.4",
+    "ts-loader": "^6.2.0",
+    "typescript": "^3.6.4",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   }
