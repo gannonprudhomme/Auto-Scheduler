@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# custom
+.vscode/settings.json
+node_modules/
+autoscheduler/frontend/src/node_modules/
+static/
