@@ -21,11 +21,18 @@ class ScrapeCoursesTestCase(TestCase):
             
             json_file.close()
 
+    def test__get_courses__normalInput__formsCorrectly(self):
+        pass
+
     def test__parse_section__normalInput__formsCorrectly(self):
         """ Given a normal section/course input, does it format correctly? """
         expected = Section(
-            id = "CSCE110-501", 
-        ) 
+            id = "10915-201931",
+            
+            instructor="T00918203"
+        )
+
+        scrape_courses.parse_section({ }, "10915")
 
     def test__parse_meeting__normalInput__formsCorrectly(self):
         """ Given a normal section meeting input, ensure it formats correctly """
