@@ -1,8 +1,36 @@
 # Auto-Scheduler
 ## Install
-1) First you need to need to install python
-2) Second, you'll need to install Django. Do this by running `pip install Django`
-3) Third, you'll need to install Postgresql, which is our database of choice. Run `pip install psycopg2` to do so.
-4) You might need to install Postgresql from someplace else but honestly I'm not sure, it differed widely from when I did it on Windows 10 vs macOS
-5) Once you have PostgresQL installed, you'll need to create the `dbautoscheduler` database
-    a) You can do this by opening the PostgresQl command line(type `psql` in command line) then type `CREATE DATABASE dbautoscheduler;`
+Follow these steps to start a local Django server using a PostgreSQL database:
+1) If you don’t have it already, download Python from [here](https://www.python.org/downloads/).
+2) Run the following in your command line interface to install the python packages necessary to run our database and server:
+```
+pip install Django
+pip install psycopg2
+```
+3) Set up a PostgresQL server by following one of these guides, and make sure you set the name of the database when prompted to `dbautoscheduler`:  
+[Windows/Mac](http://www.postgresqltutorial.com/install-postgresql/)  
+[Linux](https://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/)  
+You may also want to download pgAdmin 4 for ease of database management (it can be installed with PostgreSQL if you used the about Windows/Mac guide). It can also be downloaded from [here](https://www.pgadmin.org/download/).
+4) (Only if using pgAdmin) Create a new server by opening pgAdmin and right-click “Servers->Create->Server…”. Set a name pgAdmin will use (it can be anything), then change to the Connection tab. Ensure the following settings are being used:  
+Host name/address: localhost  
+Port: 5432  
+Maintenance database: postgres  
+Username: postgres  
+Password: (not necessary)  
+5) Ensure the database `dbautoscheduler` has been created:  
+Using psql: Type `\l` in the psql prompt and see if `dbautoscheduler` is in the list.  
+Using pgAdmin: Click the name of the server you created, and see if `dbautoscheduler` is in the tree menu.
+6) If you'd like to get the current project running, you can clone the repository with `git clone https://github.com/gannonprudhomme/AutoScheduler/` and run the steps below.
+
+## Running
+The only thing set up currently is scraping a single department worth of courses(CSCE) and scraping all of the departments.
+
+To do these,
+
+1) Run `cd autoscheduler`
+2) Run `./manage.py makemigrations` and `./manage.py migrate` to generate SQL that will be used to fill the database.
+3) Run `./manage.py createsuperuser` to create a user for Django.
+3) Run `./manage.py scrape_dept` to scrape all of the available departments.
+4) Run `./manage.py scrape_courses` to scrape the courses, sections, and instructors.
+
+If `./manage.py` isn't working, try to use `python manage.py` or `python3 manage.py` in place of it. 
