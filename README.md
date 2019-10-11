@@ -2,14 +2,30 @@
 ## Install
 Follow these steps to start a local Django server using a PostgreSQL database:
 1) If you don’t have it already, download Python from [here](https://www.python.org/downloads/).
-2) Run the following in your command line interface to install the python packages necessary to run our database and server:
+2) The app runs within a virtualenv called "django_app". Before you activate the venv and install the requirements make sure you have postgres setup correctly
+
 ```
-pip install Django
-pip install psycopg2
+MacOS (there is a known bug with psycopg2 on mac);
+
+brew install postgres 
+Add postgres executable to your PATH (ie open up ~/.bash_profile and append /usr/local/bin/postgres to your PATH)
+brew reinstall openssl
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/opt/openssl/lib/
+
+Ubuntu;
+sudo apt-get install libpq-dev python-dev
+sudo apt-get install python3-Psycopg2
+sudo apt-get install python3-pip
+
 ```
-3) Set up a PostgresQL server by following one of these guides, and make sure you set the name of the database when prompted to `dbautoscheduler`:  
-[Windows/Mac](http://www.postgresqltutorial.com/install-postgresql/)  
-[Linux](https://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/)  
+Then you can activate your env and install the requirements; 
+```
+source django_app/bin/activate
+pip3 install -r requirements.txt
+
+```
+Now to run the app, make sure to source your venv before running. Your global python env does not include the deps in requirements.txt anymore, only the venv does. A good way to see the different is to run pip3 list before and after activating the venv.
+
 You may also want to download pgAdmin 4 for ease of database management (it can be installed with PostgreSQL if you used the about Windows/Mac guide). It can also be downloaded from [here](https://www.pgadmin.org/download/).
 4) (Only if using pgAdmin) Create a new server by opening pgAdmin and right-click “Servers->Create->Server…”. Set a name pgAdmin will use (it can be anything), then change to the Connection tab. Ensure the following settings are being used:  
 Host name/address: localhost  
