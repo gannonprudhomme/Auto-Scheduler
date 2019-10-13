@@ -12,20 +12,21 @@ Follow these steps to start a local Django server using a PostgreSQL database:
         - If you get a permissions error that says: `execution of scripts is disabled on this system`, then open another PowerShell as Administrator and run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned`.
             - Alternatively, you can just run the original script as Administrator.
     - You will need to do `source env/bin/activate` or `./env/Scripts/activate` anytime you want to interact with the server(i.e. to run it with `python manage.py runserver`)
-3) Set up a PostgresQL server by following one of these guides, and make sure you set the name of the database when prompted to `dbautoscheduler`:  
+3) Now, run `pip install -r requirements.txt` to install the necessary packages for the project.
+4) Set up a PostgresQL server by following one of these guides, and make sure you set the name of the database when prompted to `dbautoscheduler`:  
 [Windows/Mac](http://www.postgresqltutorial.com/install-postgresql/)  
 [Linux](https://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/)  
 You may also want to download pgAdmin 4 for ease of database management (it can be installed with PostgreSQL if you used the about Windows/Mac guide). It can also be downloaded from [here](https://www.pgadmin.org/download/).
-4) (Only if using pgAdmin) Create a new server by opening pgAdmin and right-click “Servers->Create->Server…”. Set a name pgAdmin will use (it can be anything), then change to the Connection tab. Ensure the following settings are being used:  
+5) (Only if using pgAdmin) Create a new server by opening pgAdmin and right-click “Servers->Create->Server…”. Set a name pgAdmin will use (it can be anything), then change to the Connection tab. Ensure the following settings are being used:  
 Host name/address: localhost  
 Port: 5432  
 Maintenance database: postgres  
 Username: postgres  
 Password: (not necessary)  
-5) Ensure the database `dbautoscheduler` has been created:  
+6) Ensure the database `dbautoscheduler` has been created:  
 Using psql: Type `\l` in the psql prompt and see if `dbautoscheduler` is in the list.  
 Using pgAdmin: Click the name of the server you created, and see if `dbautoscheduler` is in the tree menu.
-6) If you'd like to get the current project running, you can clone the repository with `git clone https://github.com/gannonprudhomme/AutoScheduler/` and run the steps below.
+7) If you'd like to get the current project running, you can clone the repository with `git clone https://github.com/gannonprudhomme/AutoScheduler/` and run the steps below.
 
 ## Running
 The only thing set up currently is scraping a single department worth of courses(CSCE) and scraping all of the departments.
