@@ -9,7 +9,7 @@ Follow these steps to start a local Django server using a PostgreSQL database:
         - You'll also see a folder(`Scripts/` on Windows & `bin/` on Unix systems) that contains the scripts that you need to start the virtual environment.
     - Next, for Unix systems run: `source env/bin/activate`
     - And for Windows, in Powershell run: `./env/Scripts/activate`
-        - If you get an permisions error that says: `execution of scripts is disabled on this system`, then open another PowerShell as Administrator and run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned`.
+        - If you get a permissions error that says: `execution of scripts is disabled on this system`, then open another PowerShell as Administrator and run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned`.
             - Alternatively, you can just run the original script as Administrator.
     - You will need to do `source env/bin/activate` or `./env/Scripts/activate` anytime you want to interact with the server(i.e. to run it with `python manage.py runserver`)
 3) Set up a PostgresQL server by following one of these guides, and make sure you set the name of the database when prompted to `dbautoscheduler`:  
