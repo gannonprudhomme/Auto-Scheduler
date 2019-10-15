@@ -13,6 +13,9 @@ Follow these steps to start a local Django server using a PostgreSQL database:
             - Alternatively, you can just run the original script as Administrator.
     - You will need to do `source env/bin/activate` or `./env/Scripts/activate` anytime you want to interact with the server(i.e. to run it with `python manage.py runserver`)
 3) Now, run `pip install -r requirements.txt` to install the necessary packages for the project.
+    - For MacOS: If your installation fails for `psycopg2` run:
+        - `brew reinstall openssl`
+        - `export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/opt/openssl/lib/`
 4) Set up a PostgresQL server by following one of these guides, and make sure you set the name of the database when prompted to `dbautoscheduler`:  
 [Windows/Mac](http://www.postgresqltutorial.com/install-postgresql/)  
 [Linux](https://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/)  
