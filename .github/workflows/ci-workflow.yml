@@ -9,6 +9,5 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name : docker-build
-        uses: actions/docker/cli@master
         with:
           args: docker-compose up
