@@ -12,7 +12,7 @@ class ScrapeCoursesTestCase(TestCase):
 
     def setUp(self):
         base_path = Path(__file__).parent
-        file_path = (base_path / ".../section_inputs.json").resolve()
+        file_path = (base_path / "./section_inputs.json").resolve()
 
         # Load in the section input test data
         with open(file_path) as json_file:
@@ -32,7 +32,7 @@ class ScrapeCoursesTestCase(TestCase):
             instructor="T00918203"
         )
 
-        scrape_courses.parse_section({ }, "10915")
+        # scrape_courses.parse_section({ }, "10915")
 
     def test__parse_meeting__normalInput__formsCorrectly(self):
         """ Given a normal section meeting input, ensure it formats correctly """
@@ -46,9 +46,7 @@ class ScrapeCoursesTestCase(TestCase):
             meeting_type = "LEC"
         )
 
-        actual = scrape_courses.parse_meeting(self.section_input['meetingsFaculty'][0]['meetingTime'], 'CSCE110-501')
-        print(expected.crn)
-        print(actual.crn)
+        actual = scrape_courses.parse_meeting(self.section_input['meetingsFaculty'][0], 'CSCE110-501', 0)
 
         self.assertEqual(expected, actual)
 
