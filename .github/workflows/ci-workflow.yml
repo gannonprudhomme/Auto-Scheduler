@@ -9,5 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name : docker-build
-        with:
-          args: docker-compose up
+        run: docker-compose up
