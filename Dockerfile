@@ -11,4 +11,6 @@ RUN pip install -r docker-requirements.txt
 
 COPY docker-entrypoint.sh /usr/local/bin
 COPY docker-entrypoint.sh /app
+RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
+RUN chmod 755 /app/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
