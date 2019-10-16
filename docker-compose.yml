@@ -1,0 +1,40 @@
+version: "3.1"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:      
+      - POSTGRES_USER_FILE=/run/secrets/SECRET_POSTGRES_USER
+      - POSTGRES_PASSWORD_FILE=/run/secrets/SECRET_POSTGRES_PASS
+      - POSTGRES_DB=dbautoscheduler
+    secrets:
+      - SECRET_POSTGRES_USER
+      - SECRET_POSTGRES_PASS
+    
+  web:
+    build: .
+    command: python3 manage.py runserver --settings=goodbullschedules.settings.docker 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    container_name: autoscheduler
+    secrets:
+      - SECRET_DJANGO_KEY
+      - SECRET_POSTGRES_USER
+      - SECRET_POSTGRES_PASS
+
+volumes:
+  pgdata:
+
+secrets:
+  SECRET_DJANGO_KEY:
+    file: ./config/django_key
+  SECRET_POSTGRES_USER:
+    file: ./config/postgres_username
+  SECRET_POSTGRES_PASS:
+    file: ./config/postgres_password
