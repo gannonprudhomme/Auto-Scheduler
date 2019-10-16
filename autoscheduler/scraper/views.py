@@ -8,7 +8,7 @@ class DepartmentSearchView(generics.ListAPIView):
     renderer_classes = [renderers.JSONRenderer]
     serializer_class = serializers.DepartmentSerializer
 
-    # Get 
+    # Get
     def get_queryset(self):
         """
         Returns all of the courses that match the text that was provided
