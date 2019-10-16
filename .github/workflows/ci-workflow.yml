@@ -1,0 +1,14 @@
+name: Continous Integration
+# This workflow is trigged on pushes to the repository
+on: [push]
+
+jobs:
+  test:
+    name: 'Django Testing?' # job name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name : docker-build
+        uses: actions/docker/cli@master
+        with:
+          args: docker-compose up
