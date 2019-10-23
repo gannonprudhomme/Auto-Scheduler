@@ -5,6 +5,9 @@ from http.cookiejar import CookieJar
 from scraper.models.course import Course
 from scraper.models.section import Section, Meeting
 from scraper.models.instructor import Instructor
+from scraper.models.department import Department
+
+from scraper.banner_requests import BannerRequests
 
 import requests, json
 import time, datetime
@@ -35,29 +38,7 @@ params = {
 loaded_courses = set()
 loaded_instructors = set() # Contains their "bannerId"
 
-def generate_session():
-    """ Goes to the correct places to generate a valid JSESSIONID cookie that we need to search for courses """
-    session = requests.Session()
-    session.get('https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/registration/registration')
-    session.get('https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/classSearch/classSearch')
-    data = session.post('https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/term/search?mode=search')
-    terms = session.get(TERMS_URL)
-
-    return session
-
 # Temporary, until I can get the courses actually scraped
-def get_faked_courses():
-    base_path = Path(__file__).parent
-    file_path = (base_path / "../../tests/course_inputs_large.json").resolve()
-    data = ''
-
-    with open(file_path) as json_file:
-        data = json.load(json_file)
-        print('done loading')
-
-        json_file.close()
-
-    return data
 
 def get_faked_section():
     base_path = Path(__file__).parent
@@ -71,27 +52,17 @@ def get_faked_section():
 
     return data
 
+def get_courses(banner_requests, department):
+    if(department == 'TAMU'):
+        return
+
+
+    print("Retrieving for department " + department)
+    data = banner_requests.get_courses(department)
+
+    return data
+
 # Rename to retrieve_courses?
-def get_courses():
-    # Somehow create a session id
-    # session = generate_session()
-    # data = session.get(BASE_URL_PARAMS)
-    data = get_faked_courses()
-    # data = get_faked_section()
-    course_data = { }
-
-    try:
-        # print('awaiting...')
-        course_data = data['data']
-        # retrieve_course(data)
-        return course_data
-        print(f"totalCount: {data['totalCount']}")
-    except Exception as e:
-        print('Error: scrape_courses could not get json')
-        print(e)
-
-    return dict()
-
 def get_course_descriptions(term, crn):
     "Given the term code & a crn, returns the course description for the class"
     pass
@@ -102,9 +73,13 @@ def parse_course_list(json):
         subject_and_course = parse_course(section)
         parse_section(section, subject_and_course)
         count = count + 1
+
     print(f'Scraped {len(loaded_courses)} courses, {count} sections, and {len(loaded_instructors)} instructors')
+    loaded_courses.clear()
+    loaded_instructors.clear()
 
 def parse_course(json):
+    # print(json)
     # print(json)
     course = Course(
         id = json['id'],
@@ -116,6 +91,7 @@ def parse_course(json):
 
     maxSeats = json['maximumEnrollment']
     seatsAvailable = json['seatsAvailable']
+
     # Get wait list info?
     # Get credit hour stuff? - probs
     subject_and_course = json['subjectCourse'] # i.e. CSCE221
@@ -141,6 +117,10 @@ def parse_course(json):
 def parse_section(json, course):
     """ Given a single section data, parses it and returns a course, section tuple? """
 
+    instructor = ""
+    if(len(json["faculty"]) > 0):
+        instructor=json["faculty"][0]["bannerId"]
+
     crn = json["courseReferenceNumber"]
     section = Section( # Not sure what else I want to have in here
         id = f"{crn}-{json['term']}",
@@ -155,7 +135,7 @@ def parse_section(json, course):
         max_enrollment = json["maximumEnrollment"],
         current_enrolled = json["enrollment"],
 
-        instructor=json["faculty"][0]["bannerId"], # I assume this is their ID?
+        instructor=instructor, # I assume this is their ID?
     )
 
     section.save()
@@ -229,8 +209,15 @@ class Command(base.BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
 
-        data = get_courses()
-        parse_course_list(data)
+        banner = BannerRequests()
+        banner.create_session()
+
+        models = Department.objects.all()
+        for object in models:
+            data = get_courses(banner, object.code)
+            parse_course_list(data)
+
+
 
         end = time.time()
         seconds_elapsed = int(end - start)
