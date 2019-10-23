@@ -224,4 +224,4 @@ class Command(base.BaseCommand):
         end = time.time()
         seconds_elapsed = int(end - start)
         time_delta = datetime.timedelta(seconds=seconds_elapsed)
-        # print(f"Finished scraping courses in {time_delta}")
+        print(f"Finished scraping courses in {time_delta}")
