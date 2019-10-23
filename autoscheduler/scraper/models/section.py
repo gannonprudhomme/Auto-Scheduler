@@ -12,7 +12,7 @@ class Meeting(models.Model):
 
     id = models.CharField(max_length=20, primary_key=True) # What would this be?
     crn = models.CharField(max_length=10, db_index=True) # The reference to the section
-    building = models.CharField(max_length=4, null=True) # Should we reference Building here? If we need it as a model anyways
+    building = models.CharField(max_length=5, null=True) # Should we reference Building here? If we need it as a model anyways
     meeting_days = models.CharField(max_length=7) # MTWRFSU, where S = saturday, U = Sunday?
     start_time = models.TimeField(null=True)
     end_time = models.TimeField(null=True)
