@@ -69,6 +69,10 @@ def get_course_descriptions(term, crn):
 
 def parse_course_list(json):
     count = 0
+    if(json == None):
+        print('Json is none for some reason')
+        return
+
     for section in json:
         subject_and_course = parse_course(section)
         parse_section(section, subject_and_course)
@@ -216,8 +220,6 @@ class Command(base.BaseCommand):
         for object in models:
             data = get_courses(banner, object.code)
             parse_course_list(data)
-
-
 
         end = time.time()
         seconds_elapsed = int(end - start)
