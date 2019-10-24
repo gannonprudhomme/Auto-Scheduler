@@ -1,6 +1,6 @@
-import requests
 import time
 import asyncio
+import aiohttp
 
 from typing import Dict, List
 
@@ -19,7 +19,6 @@ class BannerRequests():
     # Should we have our own session object?
 
     def __init__(self, base_url, term_code):
-        self.session = None
         self.session_id = ""
         self.term_code = term_code
 
@@ -30,10 +29,9 @@ class BannerRequests():
                                   'subjectDescription&sortDirection=asc&' \
                                   'uniqueSessionId={session_id}' % base_url
 
-    def create_session(self):
+    async def create_session(self, session: aiohttp.ClientSession):
         """ First function to be called """
 
-        self.session = requests.Session()
         self.session_id = generate_session_id()
 
         data = {
@@ -45,34 +43,56 @@ class BannerRequests():
         URL = ('https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/'
                'ssb/term/search?mode=search')
 
-        self.session.post(URL, data=data)
+        async with session.post(URL, data=data) as resp:
+            data = await resp.json()
 
-    def get_courses(self, department: str):
+    async def search(self, departments: List[str]):
+        """ Returns a list of futures for retrieving """
+
+        loop = asyncio.get_running_loop()
+
+        results = []
+        async with aiohttp.ClientSession(loop=loop) as session:
+            await self.create_session(session)
+
+            tasks = [self.get_courses(session, department) 
+                     for department in departments]
+            for result in await asyncio.gather(*tasks, loop=loop):
+                results.append(result)
+        
+        return results
+
+    async def get_courses(self, session, department: str):
         """ Retrieves all of the courses for a given department
             Department: 4 character string, such as CSCE
+            Should return a future?
         """
-
-        self.reset_search() # Reset the session preemptively
 
         num_courses = 1000
         data = {
             'session_id': self.session_id,
             'subject': department,
             'term': self.term_code,
-            'num_courses': 1000
+            'num_courses': num_courses
         }
 
         URL = self.course_search_url.format(**data)
-        print(URL)
 
-        response = self.session.get(URL)
+        print('Attempting to retrieve ' + department)
+        async with session.get(URL) as resp:
+            json = await resp.json()
 
-        json = response.json()
+        await self.reset_search(session)
+        
         data = json['data']
+        if(data != None):
+            print('Retreived ' + str(len(data)) + ' sections for ' + department)
+        else:
+            print('Retrieved no sections for ' + department)
 
         return data
 
-    def reset_search(self):
+    async def reset_search(self, session):
         """ Does something with the session ID to reset the search
 
         If you try to call get_courses twice in a row without this, the second
@@ -81,4 +101,8 @@ class BannerRequests():
         url = ('https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/'
                'classSearch/resetDataForm')
 
-        self.session.post(url)
+        await session.post(url)
+        #async with session.post(url) as resp:
+        #    data = await resp.json()
+
+        #return data # Don't really need to though

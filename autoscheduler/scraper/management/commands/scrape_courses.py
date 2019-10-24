@@ -73,12 +73,15 @@ def parse_course_list(json):
         print('Json is none for some reason')
         return
 
+    dept = ''
     for section in json:
+        dept = section['subject']
         subject_and_course = parse_course(section)
         parse_section(section, subject_and_course)
         count = count + 1
 
-    print(f'Scraped {len(loaded_courses)} courses, {count} sections, and {len(loaded_instructors)} instructors')
+    print(f'{dept}: Scraped {len(loaded_courses)} courses, {count} sections, '\
+          f'and {len(loaded_instructors)} instructors')
     loaded_courses.clear()
     loaded_instructors.clear()
 
@@ -214,14 +217,31 @@ class Command(base.BaseCommand):
         start = time.time()
 
         banner = BannerRequests('compassxe-ssb.tamu.edu', '201931')
-        banner.create_session()
 
-        models = Department.objects.all()
-        for object in models:
-            data = get_courses(banner, object.code)
-            parse_course_list(data)
+        # models = Department.objects.all()
+
+        depts = [model.code for model in Department.objects.all()]
+        # depts = ['CSCE', 'MATH']
+
+        loop = asyncio.get_event_loop()
+        results = loop.run_until_complete(banner.search(depts))
 
         end = time.time()
         seconds_elapsed = int(end - start)
         time_delta = datetime.timedelta(seconds=seconds_elapsed)
-        print(f"Finished scraping courses in {time_delta}")
+        print(f"Finished retrieving all courses in {time_delta}")
+
+        save_start = time.time()
+
+        # Could we make this part asynchronous as well?
+        for courses in results:
+            parse_course_list(courses)
+
+        end = time.time()
+        seconds_elapsed = int(end - save_start)
+        time_delta = datetime.timedelta(seconds=seconds_elapsed)
+        print(f"Finished parsing courses in {time_delta}")
+
+        seconds_elapsed = int(end - start)
+        time_delta = datetime.timedelta(seconds=seconds_elapsed)
+        print(f"Finished all in {time_delta}")
