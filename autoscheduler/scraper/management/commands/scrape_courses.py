@@ -213,7 +213,7 @@ class Command(base.BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
 
-        banner = BannerRequests()
+        banner = BannerRequests('compassxe-ssb.tamu.edu', '201931')
         banner.create_session()
 
         models = Department.objects.all()
