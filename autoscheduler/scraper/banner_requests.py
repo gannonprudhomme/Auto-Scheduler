@@ -57,8 +57,9 @@ class BannerRequests():
 
             tasks = [self.get_courses(session, department) 
                      for department in departments]
-            for result in await asyncio.gather(*tasks, loop=loop):
-                results.append(result)
+            # for result in await asyncio.gather(*tasks, loop=loop):
+            for task in tasks:
+                results.append(await task)
         
         return results
 
