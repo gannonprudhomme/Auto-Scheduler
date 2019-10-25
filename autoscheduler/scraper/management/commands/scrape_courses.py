@@ -224,7 +224,7 @@ class Command(base.BaseCommand):
         # depts = ['CSCE', 'MATH']
 
         loop = asyncio.get_event_loop()
-        results = loop.run_until_complete(banner.search(depts))
+        results = loop.run_until_complete(banner.search_all(depts))
 
         end = time.time()
         seconds_elapsed = int(end - start)

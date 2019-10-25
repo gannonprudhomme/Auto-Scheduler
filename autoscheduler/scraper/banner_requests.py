@@ -1,6 +1,8 @@
 import time
+import random
 import asyncio
 import aiohttp
+import string
 
 from typing import Dict, List
 
@@ -9,7 +11,7 @@ TAMU_BASE_URL = 'compassxe-ssb.tamu.edu'
 def generate_session_id():
     """ Generates a 18 character session id """
     # TODO: Actually generate this
-    session_id = "y8ixb1571813088562"
+    session_id = "".join(random.sample(string.ascii_lowercase, 5)) + str(int(time.time() * 1000))
 
     return session_id
 
@@ -46,21 +48,33 @@ class BannerRequests():
         async with session.post(URL, data=data) as resp:
             data = await resp.json()
 
-    async def search(self, departments: List[str]):
+    async def search(self, department: str):
         """ Returns a list of futures for retrieving """
 
         loop = asyncio.get_running_loop()
 
-        results = []
+        result = []
         async with aiohttp.ClientSession(loop=loop) as session:
             await self.create_session(session)
 
-            tasks = [self.get_courses(session, department) 
-                     for department in departments]
+            result = await self.get_courses(session, department)
+
+            #tasks = [self.get_courses(session, department) 
+            #         for department in departments]
             # for result in await asyncio.gather(*tasks, loop=loop):
-            for task in tasks:
-                results.append(await task)
+            #for task in tasks:
+            #    results.append(await task)
         
+        return result
+
+    async def search_all(self, departments: List[str]):
+        loop = asyncio.get_running_loop()
+        tasks = [self.search(dept) for dept in departments]
+        results = []
+
+        for result in await asyncio.gather(*tasks, loop=loop):
+            results.append(result)
+
         return results
 
     async def get_courses(self, session, department: str):
