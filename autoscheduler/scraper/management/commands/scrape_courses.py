@@ -132,6 +132,7 @@ def parse_section(json, course):
     crn = json["courseReferenceNumber"]
     section = Section( # Not sure what else I want to have in here
         id = f"{crn}-{json['term']}",
+        crn = crn,
         subject = json["subject"], # Not sure if we need this
         section_num = json["sequenceNumber"],
         course_num = json["courseNumber"],
@@ -227,7 +228,6 @@ class Command(base.BaseCommand):
         # models = Department.objects.all()
         models = Department.objects.filter(term=term) 
         depts = [model.code for model in models]
-        print(len(depts))
         #depts = ['CSCE', 'MATH']
 
         loop = asyncio.get_event_loop()

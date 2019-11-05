@@ -1,0 +1,32 @@
+{
+    "term": "202011",
+    "courses": [
+        {
+            "subject": "CSCE",
+            "course_num": 221,
+            "sections": ["12343", "12344", "12347"]
+        },
+        {
+            "subject": "CSCE",
+            "course_num": 222,
+            "sections": []
+        },
+        {
+            "subject": "MATH",
+            "course_num": 151,
+            "sections": []
+        }
+    ],
+    "priority": [
+        1, 2, 3
+    ],
+    "timeRanges": [
+        { 
+            "start": "0900", 
+            "end": "1500", 
+
+            "days_desc": "Which days this time range applies to",
+            "days": [true, true, true, true, true]
+        }
+    ]
+}

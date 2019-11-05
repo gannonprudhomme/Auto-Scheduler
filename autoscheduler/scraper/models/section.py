@@ -26,6 +26,7 @@ class Meeting(models.Model):
 class Section(models.Model):
     id = models.CharField(max_length=15, primary_key=True) # Combination of crn & term
 
+    crn = models.CharField(max_length=10, db_index=True)
     subject = models.CharField(max_length=4, db_index=True) # Is this necessary?
     section_num = models.CharField(max_length=6, db_index=True)
     course_num = models.CharField(max_length=6, db_index=True)
