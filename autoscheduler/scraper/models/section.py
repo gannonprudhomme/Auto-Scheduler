@@ -17,6 +17,7 @@ class Meeting(models.Model):
     start_time = models.TimeField(null=True)
     end_time = models.TimeField(null=True)
     meeting_type = models.CharField(max_length=50) # Lecture, Lab, etc
+    meeting_type_desc = models.CharField(max_length=50)
 
     class Meta:
         db_table = "meetings"

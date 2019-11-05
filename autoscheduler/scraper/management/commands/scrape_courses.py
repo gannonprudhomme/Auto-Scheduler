@@ -93,6 +93,7 @@ def parse_course(json):
         dept = json['subject'],
         course_num = json['courseNumber'],
         title = json['courseTitle'],
+        term = json['term']
         # crn = json['courseReferenceNumber]'],
     )
 
@@ -159,6 +160,7 @@ def parse_section(json, course):
     section.save()
     # print(f'Scrapped {count} meetings ')
 
+
 # TODO: Rename json
 def parse_meeting(json, section_id, count):
     """ Given a single meeting dict, parses it... and returns a Meeting object"""
@@ -168,7 +170,6 @@ def parse_meeting(json, section_id, count):
     if(begin_time != None):
         begin_time = parse_time(begin_time)
         end_time = parse_time(end_time)
-    
 
     # Probably would need error catching in here to make sure it's formed correctly?
     meeting = Meeting(
@@ -178,7 +179,8 @@ def parse_meeting(json, section_id, count):
         meeting_days = parse_meeting_days(json['meetingTime']),
         start_time = begin_time,
         end_time = end_time,
-        meeting_type = json['meetingTime']['meetingType']
+        meeting_type = json['meetingTime']['meetingType'],
+        meeting_type_desc = json['meetingTime']['meetingTypeDescription']
     )
 
     return meeting
@@ -207,21 +209,26 @@ def parse_instructor(faculty_data):
         id = faculty_data['bannerId'],
         name = faculty_data['displayName'],
         email = faculty_data['emailAddress'],
-        pidm = faculty_data['instructorPidm'],
+        pidm = '',
     )
 
     instructor.save()
 
 class Command(base.BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument('term', type=int)
+
     def handle(self, *args, **options):
         start = time.time()
 
-        banner = BannerRequests('compassxe-ssb.tamu.edu', '201931')
+        term = options['term']
+        banner = BannerRequests('compassxe-ssb.tamu.edu', term)
 
         # models = Department.objects.all()
-
-        depts = [model.code for model in Department.objects.all()]
-        # depts = ['CSCE', 'MATH']
+        models = Department.objects.filter(term=term) 
+        depts = [model.code for model in models]
+        print(len(depts))
+        #depts = ['CSCE', 'MATH']
 
         loop = asyncio.get_event_loop()
         results = loop.run_until_complete(banner.search_all(depts))

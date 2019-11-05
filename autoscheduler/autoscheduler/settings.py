@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'scraper',
     'frontend',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'autoscheduler.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbautoscheduler',
+        'NAME': 'old-dbautoscheduler',
         'HOST': 'localhost',
         'PORT': '5432',
         'USER': 'postgres',

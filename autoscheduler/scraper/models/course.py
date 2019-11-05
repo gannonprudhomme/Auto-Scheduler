@@ -6,6 +6,7 @@ class Course(models.Model): # Directly from GBS:w
     course_num = models.CharField(max_length=5, db_index=True) # i.e. 221
     title = models.CharField(max_length=100) # Course title, i.e. "Data Structres & Algorithms"
     description = models.TextField(null=True, blank=True)
+    term = models.CharField(max_length=6)
     # prerequisites = models.TextField(null=True, blank=True)
     # corequisites = models.TextField(null=True, blank=True)
     # min_credits = models.FloatField(null=True)
