@@ -11,12 +11,11 @@ import datetime
 BASE_URL = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/classSearch/get_subject'
 BASE_URL_PARAMS = 'https://compassxe-ssb.tamu.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?dataType=json&term=201931&offset=1&max=500'
 
-def get_departments():
+def get_departments(term: str):
     """
     Retrieves all of the departments from BASE_URL and returns them as JSON, if it was successful
     """
 
-    term = '201931' # Get current term from somewhered
     maxCount = 300
 
     # Call getsubjects
@@ -28,6 +27,7 @@ def get_departments():
     }
 
     r = requests.get(BASE_URL, params=params)
+    print(r)
 
     json = ''
     # Attempt to convert it to JSON
@@ -38,15 +38,17 @@ def get_departments():
 
     return json
 
-def parse_departments(json):
+def parse_departments(json, term: str):
     """
     Given the JSON of all of the departments, parses them and initializes them into Department objects
     """
 
     i = 0
     for dept in json:
+        code = dept["code"]
+        id = f'{code}-{term}'
         # Should have (code, decription)
-        dept = Department(code=dept["code"], description=dept["description"])
+        dept = Department(id=id, code=code, description=dept["description"], term=term)
         dept.save()
         i = i + 1
     
@@ -55,17 +57,22 @@ def parse_departments(json):
     return
 
 
-def scrape_departments():
-    json = get_departments()
+def scrape_departments(term: str):
+    json = get_departments(term)
 
-    parse_departments(json)
+    parse_departments(json, term)
 
 class Command(base.BaseCommand):
     def handle(self, *args, **options):
+        term = options['term']
+
         # Do stuff
         start = time.time()
-        scrape_departments()
+        scrape_departments(str(term))
         end = time.time()
         seconds_elapsed = int(end - start)
         time_delta = datetime.timedelta(seconds=seconds_elapsed)
         print(f"Finished scraping departments in {time_delta}")
+
+    def add_arguments(self, parser):
+        parser.add_argument('term', type=int)
