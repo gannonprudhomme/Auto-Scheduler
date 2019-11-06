@@ -167,7 +167,7 @@ def parse_meeting(json, section_id, count):
     """ Given a single meeting dict, parses it... and returns a Meeting object"""
 
     begin_time = json['meetingTime']['beginTime']
-    end_time = json['meetingTime']['beginTime']
+    end_time = json['meetingTime']['endTime']
     if(begin_time != None):
         begin_time = parse_time(begin_time)
         end_time = parse_time(end_time)
