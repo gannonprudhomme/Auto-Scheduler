@@ -1,30 +1,30 @@
 {
-    "term": "201931",
+    "term": "202011",
     "courses": [
         {
             "subject": "CSCE",
             "course_num": 181,
-            "sections": ["500"]
+            "sections": []
         },
         {
             "subject": "CSCE",
             "course_num": 313,
-            "sections": ["505"]
+            "sections": []
         },
         {
             "subject": "CSCE",
             "course_num": 315,
-            "sections": ["913"]
+            "sections": []
         },
         {
             "subject": "CSCE",
             "course_num": 411,
-            "sections": ["503"]
+            "sections": []
         },
         {
             "subject": "MATH",
             "course_num": 304,
-            "sections": ["504", "510", "512", "513"]
+            "sections": []
         }
     ],
     "priority": [
@@ -32,8 +32,8 @@
     ],
     "timeRanges": [
         { 
-            "start": "0900", 
-            "end": "1500", 
+            "start": "0930", 
+            "end": "1730", 
 
             "days-comment": "Which days this time range applies to",
             "days": [true, true, true, true, true]

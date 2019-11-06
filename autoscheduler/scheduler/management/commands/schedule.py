@@ -38,7 +38,6 @@ def get_all_course_sections(json) -> List[List[Section]]:
 
         if len(sections) == 0: # If they didn't specify any specific sections, get all
             sections = get_sections_for_course(subject, course_num, term)
-            print(len(sections))
             total = total * len(sections)
         else: # Specified specific sections, get the according ones
             new_sections = []
@@ -50,7 +49,12 @@ def get_all_course_sections(json) -> List[List[Section]]:
 
             # Sections is now a list of sections
             sections = new_sections
-            print(len(sections))
+
+        if len(sections) != 0:
+            section = sections[0]
+            print(f'{section.subject} {section.course_num} {len(sections)}')
+        else:
+            print('0 sections')
         
         data.append(sections)
 
@@ -93,7 +97,14 @@ def create_schedules(course_sections: List[List[Section]], start_time: int, end_
             # Remove meetings without a time as no need to compare(will always work)
                 # If they end up with no meetings, then don't add them at all
 
+            # Don't add any sections who don't have any empty seats
+            if (not section.max_enrollment == 0 and 
+              section.current_enrolled == section.max_enrollment):
+                print(f'Skipping {section.subject} {section.course_num}-{section.section_num} b/c {section.current_enrolled} {section.max_enrollment}')
+                continue
+
             meetings_set = section.meetings.all()
+            # print(f'{section.subject} {section.course_num}-{section.section_num}')
 
             # Remove sections whose meetings aren't within start & end times
             count = 0
@@ -105,8 +116,8 @@ def create_schedules(course_sections: List[List[Section]], start_time: int, end_
                     meeting_start = _time_to_int(m.start_time) 
                     meeting_end = _time_to_int(m.end_time)
 
-                    # If it doesn't intersect, then it's not within this time?
-                    if _does_start_within_time(start_time, end_time, meeting_start, 
+                    # Don't add sections who don't start within the start & end time?
+                    if not _does_start_within_time(start_time, end_time, meeting_start, 
                                                     meeting_end):
                         should_add = False
                         break # One meeting time intersecting invalidates the whole section
@@ -142,7 +153,7 @@ def do_schedule(courses: List[List[Section]], meetings,
     for section in courses[currCourse]:
         sec_meetings = meetings[section.id]
         curr_meetings = [meetings[sec.id] for sec in current]
-        # print(f'{section.subject} {section.course_num}-{section.section_num}')
+        #print(f'{section.subject} {section.course_num}-{section.section_num}')
 
         if not _does_intersect_with_current(sec_meetings, curr_meetings):
             new = current + [section]
@@ -207,7 +218,6 @@ def _does_start_within_time(start_bound: int, end_bound: int, start_time: int,
     #condition = start_time >= start_bound and end_time <= end_bound
     #print(f'{start_bound} {end_bound} to {start_time} {end_time} {condition}')
     return start_time >= start_bound and end_time <= end_bound
-
 
 class Command(base.BaseCommand):
     """ Creates a schedule given courses """
