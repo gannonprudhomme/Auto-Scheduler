@@ -65,7 +65,7 @@ def get_sections_for_course(subject: str, course_num: int, term: str):
     return sections
 
 schedules = []
-def create_schedules(course_sections: List[List[Section]], start: int, end: int):
+def create_schedules(course_sections: List[List[Section]], start_time: int, end_time: int):
     """ Creates a schedule given a list of section meeting lists """
 
     # Sort the list by courses that have the least amount of meetings first,
@@ -102,10 +102,12 @@ def create_schedules(course_sections: List[List[Section]], start: int, end: int)
                 # Check if start time is not null
                 if not m.start_time == None:
                     # Needs better names 
-                    start_time = _time_to_int(m.start_time) 
-                    end_time = _time_to_int(m.end_time)
+                    meeting_start = _time_to_int(m.start_time) 
+                    meeting_end = _time_to_int(m.end_time)
 
-                    if _does_intersect(start, end, start_time, end_time):
+                    # If it doesn't intersect, then it's not within this time?
+                    if _does_start_within_time(start_time, end_time, meeting_start, 
+                                                    meeting_end):
                         should_add = False
                         break # One meeting time intersecting invalidates the whole section
 
@@ -132,6 +134,9 @@ def do_schedule(courses: List[List[Section]], meetings,
 
     if currCourse == len(courses):
         schedules.append(current)
+        for section in current:
+            print(f'{section.subject} {section.course_num}-{section.section_num}')
+        print('')
         return
 
     for section in courses[currCourse]:
@@ -196,12 +201,20 @@ def _does_intersect_with_current(sec_meetings: List[Meeting], current: List[List
 
     return False
 
+def _does_start_within_time(start_bound: int, end_bound: int, start_time: int, 
+                            end_time: int):
+    """ Stuff """
+    #condition = start_time >= start_bound and end_time <= end_bound
+    #print(f'{start_bound} {end_bound} to {start_time} {end_time} {condition}')
+    return start_time >= start_bound and end_time <= end_bound
+
+
 class Command(base.BaseCommand):
     """ Creates a schedule given courses """
     def handle(self, *args, **options):
         start = time.time()
 
-        json_data = _load_json_file("../commands/input2.json")
+        json_data = _load_json_file("../commands/input.json")
 
         time_ranges = json_data["timeRanges"]
         start_time = int(time_ranges[0]["start"])
