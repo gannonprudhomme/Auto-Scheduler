@@ -14,7 +14,7 @@
         {
             "subject": "CSCE",
             "course_num": 315,
-            "sections": ["909", "913"]
+            "sections": ["913"]
         },
         {
             "subject": "CSCE",
@@ -24,7 +24,7 @@
         {
             "subject": "MATH",
             "course_num": 304,
-            "sections": ["508", "510", "512", "513"]
+            "sections": ["504", "510", "512", "513"]
         }
     ],
     "priority": [
@@ -35,7 +35,7 @@
             "start": "0900", 
             "end": "1500", 
 
-            "days_desc": "Which days this time range applies to",
+            "days-comment": "Which days this time range applies to",
             "days": [true, true, true, true, true]
         }
     ]

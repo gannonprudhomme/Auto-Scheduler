@@ -1,19 +1,24 @@
 {
-    "term": "202011",
+    "term": "201931",
     "courses": [
         {
             "subject": "CSCE",
-            "course_num": 221,
-            "sections": ["12343", "12344", "12347"]
+            "course_num": 121,
+            "sections": []
         },
         {
-            "subject": "CSCE",
-            "course_num": 222,
+            "subject": "POLS",
+            "course_num": 206,
             "sections": []
         },
         {
             "subject": "MATH",
             "course_num": 151,
+            "sections": []
+        },
+        {
+            "subject": "PHYS",
+            "course_num": 206,
             "sections": []
         }
     ],
